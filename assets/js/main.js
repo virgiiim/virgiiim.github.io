@@ -41,21 +41,13 @@
     $$("main section[id]").forEach(function (s) { io.observe(s); });
   }
 
-  /* ---------- news ---------- */
-  var newsList = $("#news-list"), SHOW = 5;
+  /* ---------- news (how many are shown is decided by the page fitting below) ---------- */
+  var newsList = $("#news-list");
   if (newsList) {
-    newsList.innerHTML = NEWS.map(function (n, i) {
-      return '<li' + (i >= SHOW ? ' class="is-extra"' : "") + "><time>" + n.date + "</time>" + n.text + "</li>";
-    }).join("");
-    var more = $("#news-more");
-    if (NEWS.length > SHOW) {
-      more.hidden = false;
-      more.addEventListener("click", function () {
-        var box = more.closest(".news"); var open = box.classList.toggle("is-open");
-        more.textContent = open ? "show less" : "show all";
-      });
-    }
+    newsList.innerHTML = NEWS.map(function (n) { return "<li><time>" + n.date + "</time>" + n.text + "</li>"; }).join("");
+    newsList.setAttribute("data-limit", "3");
   }
+  var oldMore = $("#news-more"); if (oldMore) oldMore.parentNode.removeChild(oldMore);
 
   /* ---------- research glyphs: a tiny seeded network per theme ---------- */
   function glyph(key) {
@@ -109,34 +101,39 @@
 
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
 
-  function chip(group, value, label, count) {
-    return '<button type="button" class="chip" data-g="' + group + '" data-v="' + value + '" aria-pressed="false">' +
-      esc(label) + (count !== undefined ? "<sup>" + count + "</sup>" : "") + "</button>";
-  }
-  function buildChips() {
-    var tc = $("#theme-chips"), yc = $("#type-chips");
-    if (!tc) return;
-    tc.innerHTML = chip("theme", "all", "all topics") + THEMES.map(function (t) {
-      return chip("theme", t.key, t.name, PUBS.filter(function (p) { return p.themes.indexOf(t.key) > -1; }).length);
+  var PUB_DEFAULT = 4, PUB_LIMIT = PUB_DEFAULT;   // publications shown before "show all"
+  var fTheme = $("#f-theme"), fType = $("#f-type"), moreBtn = $("#pubs-more");
+  state.all = false;
+
+  function countBy(fn) { return PUBS.filter(fn).length; }
+  function buildFilters() {
+    if (!fTheme) return;
+    fTheme.innerHTML = '<option value="all">All topics (' + PUBS.length + ')</option>' + THEMES.map(function (t) {
+      return '<option value="' + t.key + '">' + esc(t.name.charAt(0).toUpperCase() + t.name.slice(1)) + " (" + countBy(function (p) { return p.themes.indexOf(t.key) > -1; }) + ")</option>";
     }).join("");
-    yc.innerHTML = chip("type", "all", "all types") + TYPES.filter(function (t) {
+    fType.innerHTML = '<option value="all">All types</option>' + TYPES.filter(function (t) {
       return PUBS.some(function (p) { return p.type === t.key; });
     }).map(function (t) {
-      return chip("type", t.key, t.label, PUBS.filter(function (p) { return p.type === t.key; }).length);
+      return '<option value="' + t.key + '">' + esc(t.label.charAt(0).toUpperCase() + t.label.slice(1)) + " (" + countBy(function (p) { return p.type === t.key; }) + ")</option>";
     }).join("");
-    $$(".chip").forEach(function (b) {
-      b.addEventListener("click", function () { state[b.dataset.g] = b.dataset.v; render(); });
+    fTheme.addEventListener("change", function () { state.theme = fTheme.value; state.all = false; render(); fitPages(); });
+    fType.addEventListener("change", function () { state.type = fType.value; state.all = false; render(); fitPages(); });
+    if (moreBtn) moreBtn.addEventListener("click", function () {
+      state.all = !state.all; render();
+      if (!state.all) { fitPages(); var sec = $("#publications"); if (sec) sec.scrollIntoView(); }
     });
   }
 
   function render() {
     if (!pubsEl) return;
-    $$(".chip").forEach(function (b) { b.setAttribute("aria-pressed", String(state[b.dataset.g] === b.dataset.v)); });
+    if (fTheme) { fTheme.value = state.theme; fType.value = state.type; }
     var list = PUBS.filter(function (p) {
       return (state.theme === "all" || p.themes.indexOf(state.theme) > -1) &&
              (state.type === "all" || p.type === state.type);
     }).slice().sort(function (a, b) { return b.year - a.year; });
 
+    var total = list.length, cut = !state.all && total > PUB_LIMIT;
+    if (cut) list = list.slice(0, PUB_LIMIT);
     var lastYear = null;
     pubsEl.innerHTML = list.map(function (p, i) {
       var year = p.year !== lastYear ? p.year : ""; lastYear = p.year;
@@ -159,20 +156,78 @@
     }).join("");
 
     var filtered = state.theme !== "all" || state.type !== "all";
-    statusEl.innerHTML = "showing " + list.length + " of " + PUBS.length +
-      (filtered ? ' · <button type="button" class="link-btn" id="clear-f">clear filters</button>' : "");
+    statusEl.innerHTML = total + (total === 1 ? " paper" : " papers") +
+      (filtered ? ' · <button type="button" class="link-btn" id="clear-f">clear</button>' : "");
     var clr = $("#clear-f");
-    if (clr) clr.addEventListener("click", function () { state.theme = "all"; state.type = "all"; render(); });
+    if (clr) clr.addEventListener("click", function () { state.theme = "all"; state.type = "all"; state.all = false; render(); });
+    if (moreBtn) {
+      moreBtn.hidden = !(cut || state.all) || total <= PUB_LIMIT;
+      moreBtn.textContent = state.all ? "Show fewer" : "Show all " + total + " papers";
+    }
   }
 
   function selectTheme(key) {
-    state.theme = key; state.type = "all"; render();
+    state.theme = key; state.type = "all"; state.all = false; render(); fitPages();
     var sec = $("#publications"); if (sec) sec.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
   }
   $$(".theme__go").forEach(function (b) { b.addEventListener("click", function () { selectTheme(b.dataset.filter); }); });
   window.addEventListener("net:select", function (e) { selectTheme(e.detail); });
 
-  buildChips(); render();
+  buildFilters(); render();
+
+  /* ---------- long lists: first N items, then "show all" ---------- */
+  var LISTS = [];
+  $$("[data-limit]").forEach(function (list) {
+    var L = { list: list, items: Array.prototype.slice.call(list.children), max: parseInt(list.getAttribute("data-limit"), 10), min: parseInt(list.getAttribute("data-min") || "1", 10), open: false };
+    L.n = L.max;
+    L.btn = document.createElement("button");
+    L.btn.type = "button"; L.btn.className = "more-btn"; L.btn.setAttribute("aria-expanded", "false");
+    L.btn.addEventListener("click", function () {
+      L.open = !L.open; applyList(L);
+      if (!L.open) { fitPages(); var sec = list.closest("section"); if (sec) sec.scrollIntoView(); }
+    });
+    list.parentNode.insertBefore(L.btn, list.nextSibling);
+    LISTS.push(L); applyList(L);
+  });
+  function applyList(L) {
+    L.items.forEach(function (li, i) { li.hidden = !L.open && i >= L.n; });
+    L.btn.hidden = L.items.length <= L.n;
+    L.btn.setAttribute("aria-expanded", String(L.open));
+    L.btn.textContent = L.open ? "Show less" : "Show all " + L.items.length;
+  }
+
+  /* ---------- one section = one screen ----------
+     On computers every section is exactly one screen tall (CSS). Here we make sure the
+     content also fits: if a section is too tall, its lists show fewer items (never fewer
+     than one); the rest stays behind "Show all". Phones scroll normally. */
+  var pageMode = window.matchMedia("(min-width: 900px) and (min-height: 600px)");
+  function contentHeight(sec) {
+    var h = 0, kids = sec.children;
+    for (var i = 0; i < kids.length; i++) if (!kids[i].hidden) h = Math.max(h, kids[i].offsetTop + kids[i].offsetHeight);
+    return h + parseFloat(getComputedStyle(sec).paddingBottom);
+  }
+  function fitPages() {
+    LISTS.forEach(function (L) { if (!L.open) { L.n = L.max; applyList(L); } });
+    if (!state.all && PUB_LIMIT !== PUB_DEFAULT) { PUB_LIMIT = PUB_DEFAULT; render(); }
+    if (!pageMode.matches) return;
+    var H = window.innerHeight;
+    $$("main > section").forEach(function (sec) {
+      var ls = LISTS.filter(function (L) { return !L.open && sec.contains(L.list); });
+      var pubs = sec.id === "publications" && !state.all;
+      for (var guard = 0; guard < 60 && contentHeight(sec) > H; guard++) {
+        // shrink whichever list currently shows the most items
+        var best = null;
+        ls.forEach(function (L) { if (L.n > L.min && (!best || L.n > best.n)) best = L; });
+        if (pubs && PUB_LIMIT > 1 && (!best || PUB_LIMIT >= best.n)) { PUB_LIMIT--; render(); continue; }
+        if (!best) break;
+        best.n--; applyList(best);
+      }
+    });
+  }
+  var ft; window.addEventListener("resize", function () { clearTimeout(ft); ft = setTimeout(fitPages, 150); });
+  fitPages();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPages);
+  window.addEventListener("load", fitPages);
 
   /* ---------- reveal on scroll ---------- */
   if ("IntersectionObserver" in window) {

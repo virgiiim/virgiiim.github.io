@@ -38,8 +38,12 @@
       ink: cs.getPropertyValue("--ink").trim(),
       ink2: cs.getPropertyValue("--ink-2").trim(),
       ink3: cs.getPropertyValue("--ink-3").trim(),
-      bg: cs.getPropertyValue("--bg").trim(),
-      accent: cs.getPropertyValue("--accent").trim()
+      bg: cs.getPropertyValue("--hero-bg").trim() || cs.getPropertyValue("--bg").trim(),
+      accent: cs.getPropertyValue("--coral").trim(),
+      coralText: cs.getPropertyValue("--coral-text").trim(),
+      peach: cs.getPropertyValue("--peach").trim(),
+      peri: cs.getPropertyValue("--peri").trim(),
+      onAccent: cs.getPropertyValue("--on-accent").trim() || "#fff"
     };
   }
   function countFor(key) { return PUBS.filter(function (p) { return p.themes.indexOf(key) > -1; }).length; }
@@ -73,7 +77,7 @@
     } else area = { x: W * 0.5, y: 0, w: W * 0.5, h: H };
     center.x = area.x + area.w / 2; center.y = area.y + area.h / 2 + 6;
     // horizontal room the labels need: side hubs (beside) and bottom hubs (below, running outward)
-    var side = mobile ? 70 : 124, low = mobile ? 72 : 160;
+    var side = mobile ? 74 : 150, low = mobile ? 76 : 180;
     R = Math.min((area.w / 2 - side) / 1.03, (area.w / 2 - low) / 0.64, (area.h / 2 - 62) / 0.92, 220);
     R = Math.max(R, 80);
     anchors = [];
@@ -135,7 +139,7 @@
         dx = a.x - b.x; dy = a.y - b.y; d2 = dx * dx + dy * dy;
         if (d2 > 6400 || d2 === 0) continue;
         if (d2 < 25) d2 = 25;
-        var strength = (a.type === "core" || b.type === "core") ? 900 : (a.type === "hub" || b.type === "hub") ? 160 : 70;
+        var strength = (a.type === "core" || b.type === "core") ? 1300 : (a.type === "hub" || b.type === "hub") ? 260 : 110;
         f = strength * s / d2; d = Math.sqrt(d2); dx /= d; dy /= d;
         if (a.type === "paper") { a.vx += dx * f; a.vy += dy * f; }
         if (b.type === "paper") { b.vx -= dx * f; b.vy -= dy * f; }
@@ -145,7 +149,7 @@
       if (e.kind !== "leaf") return;
       var p = e.b, h = e.a;
       dx = h.x - p.x; dy = h.y - p.y; d = Math.sqrt(dx * dx + dy * dy) || 1;
-      f = (d - 50 * s) * 0.02;
+      f = (d - 58 * s) * 0.02;
       p.vx += dx / d * f; p.vy += dy / d * f;
     });
     papers.forEach(function (p) {
@@ -188,18 +192,20 @@
   function lines(text) { return String(text).split("\n"); }
   function label(n, text, color, weight) {
     var ls = lines(text), lh = mobile ? 13 : 15, x = n.x, y0, align = "center";
-    if (n.type === "core") { y0 = n.y + 30; }
+    if (n.type === "core") { y0 = n.y + (mobile ? 30 : 36); }
     else {
       var an = anchors[n.t], ux = an.ux, uy = an.uy, block = ls.length * lh;
-      x = n.x + ux * 16;
+      var off = mobile ? 20 : 26;
+      x = n.x + ux * off;
       if (mobile) { x = n.x; ux = 0; uy = uy < -0.35 ? -1 : 1; } // phones: stack labels above/below
       if (ux > 0.35) align = "left"; else if (ux < -0.35) align = "right";
-      if (uy < -0.35) y0 = n.y + uy * 16 - block;          // above
-      else if (uy > 0.35) y0 = n.y + uy * 16;               // below
+      if (uy < -0.35) y0 = n.y + uy * off - block;         // above
+      else if (uy > 0.35) y0 = n.y + uy * off;              // below
       else y0 = n.y - block / 2;                            // beside
       if (align === "center") x = n.x;
     }
-    ctx.font = (weight || 500) + " " + (mobile ? 10.5 : 12) + "px 'JetBrains Mono', ui-monospace, monospace";
+    ls = ls.map(function (l) { return l.toUpperCase(); });
+    ctx.font = (weight || 600) + " " + (mobile ? 10 : 11.5) + "px Poppins, ui-sans-serif, sans-serif";
     ctx.textAlign = align; ctx.textBaseline = "top";
     ctx.lineJoin = "round"; ctx.lineWidth = 5; ctx.strokeStyle = C.bg;
     ls.forEach(function (l, k) { ctx.strokeText(l, x, y0 + k * lh); });
@@ -214,63 +220,103 @@
       var tgt = inFocus(n) ? 1 : 0;
       n.g = reduce ? tgt : n.g + (tgt - n.g) * 0.1;
     });
-    var dim = any ? 0.45 : 1;
+    var coreFocus = focus && focus.type === "core";
+    var dim = any && !coreFocus ? 0.45 : 1;
+
+    var rH = mobile ? 14 : 19, rC = mobile ? 18 : 24;
 
     // platform ripples around the core (the shared ground)
     if (!reduce) {
       for (var r = 0; r < 2; r++) {
         var ph = ((T * 0.00025) + r * 0.5) % 1;
-        ctx.globalAlpha = (1 - ph) * 0.35;
-        ctx.strokeStyle = C.accent; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(core.x, core.y, 16 + ph * 70, 0, 6.2832); ctx.stroke();
+        ctx.globalAlpha = (1 - ph) * 0.45;
+        ctx.strokeStyle = C.accent; ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.arc(core.x, core.y, rC + 4 + ph * 64, 0, 6.2832); ctx.stroke();
       }
     }
 
-    // edges
+    // edges: dashed grey links, like the network diagrams in the slides
     edges.forEach(function (e) {
       var g = Math.min(e.a.g, e.b.g);
-      ctx.globalAlpha = (e.kind === "spine" ? 0.7 : 0.5) * dim;
+      ctx.globalAlpha = (e.kind === "spine" ? 0.9 : 0.75) * dim;
       ctx.strokeStyle = C.ink3; ctx.lineWidth = e.kind === "spine" ? 1.4 : 1;
+      ctx.setLineDash(e.kind === "spine" ? [5, 4] : [3, 3]);
       ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
       if (g > 0.02) {
-        ctx.globalAlpha = g; ctx.strokeStyle = C.accent; ctx.lineWidth = e.kind === "spine" ? 2 : 1.3;
+        ctx.setLineDash([]);
+        ctx.globalAlpha = g; ctx.strokeStyle = C.accent; ctx.lineWidth = e.kind === "spine" ? 2.2 : 1.5;
         ctx.beginPath(); ctx.moveTo(e.a.x, e.a.y); ctx.lineTo(e.b.x, e.b.y); ctx.stroke();
       }
     });
+    ctx.setLineDash([]);
 
-    // papers
+    // papers: peach dots (coral when highlighted)
     papers.forEach(function (n) {
-      var rad = (mobile ? 3.6 : 4.5) + n.g * 1.2 + (hover === n ? 1.5 : 0);
+      var rad = (mobile ? 5 : 6.5) + n.g * 1.2 + (hover === n ? 2 : 0);
       ctx.globalAlpha = dim + (1 - dim) * n.g;
-      ctx.fillStyle = n.g > 0.5 ? C.accent : C.ink;
+      ctx.fillStyle = n.g > 0.5 && !coreFocus ? C.accent : C.peach;
       ctx.beginPath(); ctx.arc(n.x, n.y, rad, 0, 6.2832); ctx.fill();
-      if (n.ts.length > 1) { // papers bridging two lines get a ring
-        ctx.strokeStyle = ctx.fillStyle; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.arc(n.x, n.y, rad + 3, 0, 6.2832); ctx.stroke();
+      if (n.ts.length > 1) { // papers bridging two lines get a periwinkle ring
+        ctx.strokeStyle = C.peri; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.arc(n.x, n.y, rad + 3.5, 0, 6.2832); ctx.stroke();
       }
     });
     ctx.globalAlpha = 1;
 
-    // hubs
+    // hubs: periwinkle person nodes
     hubs.forEach(function (h) {
-      var on = h.g > 0.5, col = on ? C.accent : C.ink;
-      ctx.fillStyle = C.bg; ctx.strokeStyle = col; ctx.lineWidth = 1.6;
-      ctx.beginPath(); ctx.arc(h.x, h.y, 8 + h.g * 2, 0, 6.2832); ctx.fill(); ctx.stroke();
-      ctx.fillStyle = col; ctx.beginPath(); ctx.arc(h.x, h.y, 3 + h.g, 0, 6.2832); ctx.fill();
+      var on = h.g > 0.5 && !coreFocus, rr = rH + (coreFocus ? 0 : h.g * 2);
+      ctx.fillStyle = on ? C.accent : C.peri;
+      ctx.beginPath(); ctx.arc(h.x, h.y, rr, 0, 6.2832); ctx.fill();
+      if (!icon(h.key, h.x, h.y, rr)) person(h.x, h.y, rr);
     });
 
-    // core
-    ctx.fillStyle = C.bg; ctx.strokeStyle = C.accent; ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.arc(core.x, core.y, 15, 0, 6.2832); ctx.fill(); ctx.stroke();
-    ctx.fillStyle = C.accent; ctx.beginPath(); ctx.arc(core.x, core.y, 7 + core.g * 2, 0, 6.2832); ctx.fill();
+    // core: coral node with a small network inside
+    ctx.fillStyle = C.accent;
+    ctx.beginPath(); ctx.arc(core.x, core.y, rC + core.g * 2, 0, 6.2832); ctx.fill();
+    if (!icon("core", core.x, core.y, rC)) {
+    ctx.strokeStyle = C.onAccent; ctx.fillStyle = C.onAccent; ctx.lineWidth = 1.6;
+    var q = rC * 0.42, pts = [[0, -q], [q * 0.95, q * 0.6], [-q * 0.95, q * 0.6]];
+    ctx.beginPath(); ctx.moveTo(core.x + pts[0][0], core.y + pts[0][1]);
+    ctx.lineTo(core.x + pts[1][0], core.y + pts[1][1]); ctx.lineTo(core.x + pts[2][0], core.y + pts[2][1]); ctx.closePath(); ctx.stroke();
+    pts.forEach(function (p) { ctx.beginPath(); ctx.arc(core.x + p[0], core.y + p[1], rC * 0.17, 0, 6.2832); ctx.fill(); });
+    }
 
     // labels on top
     hubs.forEach(function (h) {
-      ctx.globalAlpha = any && h.g < 0.5 ? 0.6 : 1;
-      label(h, h.label, h.g > 0.5 ? C.accent : C.ink, 500);
+      ctx.globalAlpha = any && !coreFocus && h.g < 0.5 ? 0.55 : 1;
+      label(h, h.label, h.g > 0.5 && !coreFocus ? C.coralText : C.ink, 600);
     });
     ctx.globalAlpha = 1;
-    label(core, CORE.label, C.accent, 600);
+    label(core, CORE.label, C.coralText, 700);
+  }
+
+  /* Theme icons (Font Awesome Free 6.5.1 solid, CC BY 4.0, fontawesome.com) — same as the Research cards */
+  var ICONS = {"mh":{"w":576,"h":512,"d":"M163.9 136.9c-29.4-29.8-29.4-78.2 0-108s77-29.8 106.4 0l17.7 18 17.7-18c29.4-29.8 77-29.8 106.4 0s29.4 78.2 0 108L310.5 240.1c-6.2 6.3-14.3 9.4-22.5 9.4s-16.3-3.1-22.5-9.4L163.9 136.9zM568.2 336.3c13.1 17.8 9.3 42.8-8.5 55.9L433.1 485.5c-23.4 17.2-51.6 26.5-80.7 26.5H192 32c-17.7 0-32-14.3-32-32V416c0-17.7 14.3-32 32-32H68.8l44.9-36c22.7-18.2 50.9-28 80-28H272h16 64c17.7 0 32 14.3 32 32s-14.3 32-32 32H288 272c-8.8 0-16 7.2-16 16s7.2 16 16 16H392.6l119.7-88.2c17.8-13.1 42.8-9.3 55.9 8.5zM193.6 384l0 0-.9 0c.3 0 .6 0 .9 0z"},"polar":{"w":640,"h":512,"d":"M64 64a64 64 0 1 1 128 0A64 64 0 1 1 64 64zM25.9 233.4C29.3 191.9 64 160 105.6 160h44.8c27 0 51 13.4 65.5 34.1c-2.7 1.9-5.2 4-7.5 6.3l-64 64c-21.9 21.9-21.9 57.3 0 79.2L192 391.2V464c0 26.5-21.5 48-48 48H112c-26.5 0-48-21.5-48-48V348.3c-26.5-9.5-44.7-35.8-42.2-65.6l4.1-49.3zM448 64a64 64 0 1 1 128 0A64 64 0 1 1 448 64zM431.6 200.4c-2.3-2.3-4.9-4.4-7.5-6.3c14.5-20.7 38.6-34.1 65.5-34.1h44.8c41.6 0 76.3 31.9 79.7 73.4l4.1 49.3c2.5 29.8-15.7 56.1-42.2 65.6V464c0 26.5-21.5 48-48 48H496c-26.5 0-48-21.5-48-48V391.2l47.6-47.6c21.9-21.9 21.9-57.3 0-79.2l-64-64zM272 240v32h96V240c0-9.7 5.8-18.5 14.8-22.2s19.3-1.7 26.2 5.2l64 64c9.4 9.4 9.4 24.6 0 33.9l-64 64c-6.9 6.9-17.2 8.9-26.2 5.2s-14.8-12.5-14.8-22.2V336H272v32c0 9.7-5.8 18.5-14.8 22.2s-19.3 1.7-26.2-5.2l-64-64c-9.4-9.4-9.4-24.6 0-33.9l64-64c6.9-6.9 17.2-8.9 26.2-5.2s14.8 12.5 14.8 22.2z"},"recsys":{"w":640,"h":512,"d":"M353.8 54.1L330.2 6.3c-3.9-8.3-16.1-8.6-20.4 0L286.2 54.1l-52.3 7.5c-9.3 1.4-13.3 12.9-6.4 19.8l38 37-9 52.1c-1.4 9.3 8.2 16.5 16.8 12.2l46.9-24.8 46.6 24.4c8.6 4.3 18.3-2.9 16.8-12.2l-9-52.1 38-36.6c6.8-6.8 2.9-18.3-6.4-19.8l-52.3-7.5zM256 256c-17.7 0-32 14.3-32 32V480c0 17.7 14.3 32 32 32H384c17.7 0 32-14.3 32-32V288c0-17.7-14.3-32-32-32H256zM32 320c-17.7 0-32 14.3-32 32V480c0 17.7 14.3 32 32 32H160c17.7 0 32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zm416 96v64c0 17.7 14.3 32 32 32H608c17.7 0 32-14.3 32-32V416c0-17.7-14.3-32-32-32H480c-17.7 0-32 14.3-32 32z"},"abm":{"w":640,"h":512,"d":"M320 0c17.7 0 32 14.3 32 32V96H472c39.8 0 72 32.2 72 72V440c0 39.8-32.2 72-72 72H168c-39.8 0-72-32.2-72-72V168c0-39.8 32.2-72 72-72H288V32c0-17.7 14.3-32 32-32zM208 384c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H208zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H304zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16h32c8.8 0 16-7.2 16-16s-7.2-16-16-16H400zM264 256a40 40 0 1 0 -80 0 40 40 0 1 0 80 0zm152 40a40 40 0 1 0 0-80 40 40 0 1 0 0 80zM48 224H64V416H48c-26.5 0-48-21.5-48-48V272c0-26.5 21.5-48 48-48zm544 0c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H576V224h16z"},"rai":{"w":640,"h":512,"d":"M384 32H512c17.7 0 32 14.3 32 32s-14.3 32-32 32H398.4c-5.2 25.8-22.9 47.1-46.4 57.3V448H512c17.7 0 32 14.3 32 32s-14.3 32-32 32H320 128c-17.7 0-32-14.3-32-32s14.3-32 32-32H288V153.3c-23.5-10.3-41.2-31.6-46.4-57.3H128c-17.7 0-32-14.3-32-32s14.3-32 32-32H256c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32zm55.6 288H584.4L512 195.8 439.6 320zM512 416c-62.9 0-115.2-34-126-78.9c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C627.2 382 574.9 416 512 416zM126.8 195.8L54.4 320H199.3L126.8 195.8zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8l95.2 163.2c5.7 9.8 9.3 21.1 6.7 32.1C242 382 189.7 416 126.8 416S11.7 382 .9 337.1z"},"core":{"w":512,"h":512,"d":"M418.4 157.9c35.3-8.3 61.6-40 61.6-77.9c0-44.2-35.8-80-80-80c-43.4 0-78.7 34.5-80 77.5L136.2 151.1C121.7 136.8 101.9 128 80 128c-44.2 0-80 35.8-80 80s35.8 80 80 80c12.2 0 23.8-2.7 34.1-7.6L259.7 407.8c-2.4 7.6-3.7 15.8-3.7 24.2c0 44.2 35.8 80 80 80s80-35.8 80-80c0-27.7-14-52.1-35.4-66.4l37.8-207.7zM156.3 232.2c2.2-6.9 3.5-14.2 3.7-21.7l183.8-73.5c3.6 3.5 7.4 6.7 11.6 9.5L317.6 354.1c-5.5 1.3-10.8 3.1-15.8 5.5L156.3 232.2z"}};
+  var PATHS = {};
+  Object.keys(ICONS).forEach(function (k) { try { PATHS[k] = new Path2D(ICONS[k].d); } catch (e) {} });
+  function icon(key, x, y, r) {
+    var ic = ICONS[key], path = PATHS[key];
+    if (!ic || !path) return false;
+    var size = r * 1.05, sc = size / Math.max(ic.w, ic.h);
+    ctx.save();
+    ctx.translate(x - ic.w * sc / 2, y - ic.h * sc / 2);
+    ctx.scale(sc, sc);
+    ctx.fillStyle = C.onAccent;
+    ctx.fill(path);
+    ctx.restore();
+    return true;
+  }
+
+  // fallback glyph (head + shoulders) if Path2D is not available
+  function person(x, y, r) {
+    ctx.fillStyle = C.onAccent;
+    ctx.beginPath(); ctx.arc(x, y - r * 0.2, r * 0.27, 0, 6.2832); ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x - r * 0.48, y + r * 0.52);
+    ctx.quadraticCurveTo(x - r * 0.48, y + r * 0.1, x, y + r * 0.1);
+    ctx.quadraticCurveTo(x + r * 0.48, y + r * 0.1, x + r * 0.48, y + r * 0.52);
+    ctx.closePath(); ctx.fill();
   }
 
   function setCaption() {
@@ -304,7 +350,7 @@
   function pick(x, y) {
     var best = null, bd = Infinity;
     nodes.forEach(function (n) {
-      var lim = n.type === "core" ? 26 : n.type === "hub" ? 20 : 10;
+      var lim = n.type === "core" ? 30 : n.type === "hub" ? 24 : 12;
       var dx = n.x - x, dy = n.y - y, d2 = dx * dx + dy * dy;
       if (d2 < lim * lim && d2 < bd) { best = n; bd = d2; }
     });

@@ -14,7 +14,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Hind+Vadodara:wght@400;500;600&display=swap" rel="stylesheet">
   <!-- Font Awesome: icons for email / Scholar / ORCID / GitHub -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/fontawesome.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/brands.min.css">
@@ -113,67 +113,63 @@
       </p>
     </div>
 
-    <aside class="news" aria-labelledby="news-h">
-      <h3 id="news-h" class="label">Latest</h3>
-      <ol class="news__list" id="news-list"></ol>
-      <button class="link-btn" id="news-more" type="button" hidden>show all</button>
+    <aside class="side">
+      <div class="news" aria-labelledby="news-h">
+        <h3 id="news-h" class="label">Latest</h3>
+        <ol class="news__list" id="news-list"></ol>
+        <button class="more-btn" id="news-more" type="button" hidden>Show all</button>
+      </div>
+      <div class="path">
+        <h3 class="label">Trajectory</h3>
+        <ol class="timeline" data-limit="3">
+          <li><span class="t">2024 – now</span><div><b>Postdoctoral researcher</b>, Department of Computer Science, University of Pisa<small>Co-evolution dynamics of social media and urban human-AI ecosystems</small></div></li>
+          <li><span class="t">2021 – now</span><div><b>Research associate</b>, KDD Lab, ISTI-CNR, Pisa</div></li>
+          <li><span class="t">2021 – 25</span><div><b>PhD in Artificial Intelligence</b>, National PhD Program, AI &amp; Society, University of Pisa &amp; ISTI-CNR<small>Advisors: Giulio Rossetti, Dino Pedreschi</small></div></li>
+          <li><span class="t">2023 · 2024</span><div><b>Visiting researcher</b>, Universitat Pompeu Fabra, Barcelona<small>Web Science &amp; Social Computing group, with Carlos Castillo</small></div></li>
+          <li><span class="t">2020 – 21</span><div><b>Research fellow</b>, KDD Lab, ISTI-CNR<small>SoBigData++: human mobility and the spread of COVID-19</small></div></li>
+          <li><span class="t">2020</span><div><b>MSc in Data Science &amp; Business Informatics</b>, University of Pisa, 110/110</div></li>
+          <li><span class="t">2017</span><div><b>BSc in Digital Humanities</b> (Informatica Umanistica), University of Pisa, 110/110 cum laude</div></li>
+        </ol>
+      </div>
     </aside>
   </div>
 
-  <div class="path">
-    <h3 class="label">Trajectory</h3>
-    <ol class="timeline">
-      <li><span class="t">2024 – now</span><div><b>Postdoctoral researcher</b>, Department of Computer Science, University of Pisa<small>Co-evolution dynamics of social media and urban human-AI ecosystems</small></div></li>
-      <li><span class="t">2021 – now</span><div><b>Research associate</b>, KDD Lab, ISTI-CNR, Pisa</div></li>
-      <li><span class="t">2021 – 25</span><div><b>PhD in Artificial Intelligence</b>, National PhD Program, AI &amp; Society, University of Pisa &amp; ISTI-CNR<small>Advisors: Giulio Rossetti, Dino Pedreschi</small></div></li>
-      <li><span class="t">2023 · 2024</span><div><b>Visiting researcher</b>, Universitat Pompeu Fabra, Barcelona<small>Web Science &amp; Social Computing group, with Carlos Castillo</small></div></li>
-      <li><span class="t">2020 – 21</span><div><b>Research fellow</b>, KDD Lab, ISTI-CNR<small>SoBigData++: human mobility and the spread of COVID-19</small></div></li>
-      <li><span class="t">2020</span><div><b>MSc in Data Science &amp; Business Informatics</b>, University of Pisa, 110/110</div></li>
-      <li><span class="t">2017</span><div><b>BSc in Digital Humanities</b> (Informatica Umanistica), University of Pisa, 110/110 cum laude</div></li>
-    </ol>
-  </div>
 </section>
 
 <!-- ============================ 02 RESEARCH ============================ -->
-<section class="section wrap" id="research">
+<section class="section section--band wrap" id="research">
   <h2 class="sh"><span class="sh__n">02</span>Research</h2>
-  <p class="intro">Five research lines, all tied together by online social platforms and often overlapping. Pick one to filter the publication list.</p>
+  <p class="intro">Five research lines tied together by online social platforms. Pick one to filter the publications.</p>
 
   <div class="themes">
     <article class="theme" data-theme="mh">
-      <div class="theme__glyph" aria-hidden="true"></div>
-      <h3>Online mental health communities</h3>
-      <p>Online communities as spaces for self-disclosure, emotion regulation and peer support. NLP, cognitive networks and behavioural analysis show how users express distress, why they post, and how community responses shape whether they stay.</p>
+      <div class="theme__head"><span class="theme__icon" aria-hidden="true"><i class="fa-solid fa-hand-holding-heart"></i></span><h3>Online mental health communities</h3></div>
+      <p>How people disclose distress, cope and support each other in online mental health communities.</p>
       <button class="theme__go" type="button" data-filter="mh">papers <span class="count"></span> →</button>
     </article>
     <article class="theme" data-theme="polar">
-      <div class="theme__glyph" aria-hidden="true"></div>
-      <h3>Online polarisation &amp; echo chambers</h3>
-      <p>How polarised information environments form, last and talk. Interaction networks meet opinion and content analysis, from a general echo-chamber detection framework on Reddit to the genesis, stability and language of echo chambers on Twitter/X, open-mindedness, authority and active participation. Also: how sampled platform data can bias these estimates.</p>
+      <div class="theme__head"><span class="theme__icon" aria-hidden="true"><i class="fa-solid fa-people-arrows"></i></span><h3>Online polarisation &amp; echo chambers</h3></div>
+      <p>How echo chambers and polarised debates form and evolve, and how sampled data can bias what we measure.</p>
       <button class="theme__go" type="button" data-filter="polar">papers <span class="count"></span> →</button>
     </article>
     <article class="theme" data-theme="recsys">
-      <div class="theme__glyph" aria-hidden="true"></div>
-      <h3>Social media recommender systems</h3>
-      <p>Human–AI ecosystems as complex systems in which user behaviour, network structure and recommendation algorithms co-evolve, with a focus on the coverage, concentration and inequality of visibility for content and creators.</p>
+      <div class="theme__head"><span class="theme__icon" aria-hidden="true"><i class="fa-solid fa-ranking-star"></i></span><h3>Social media recommender systems</h3></div>
+      <p>How recommendation algorithms and network structure shape who and what gets seen.</p>
       <button class="theme__go" type="button" data-filter="recsys">papers <span class="count"></span> →</button>
     </article>
     <article class="theme" data-theme="abm">
-      <div class="theme__glyph" aria-hidden="true"></div>
-      <h3>LLM agents &amp; social simulation</h3>
-      <p>Simulation as a companion to observation: from UTLDR, an agent-based framework for epidemics and interventions, to YSocial, a social platform twin where LLM agents post, interact, follow and get recommended content, enabling controlled and counterfactual experiments.</p>
+      <div class="theme__head"><span class="theme__icon" aria-hidden="true"><i class="fa-solid fa-robot"></i></span><h3>LLM agents &amp; social simulation</h3></div>
+      <p>Simulated social platforms with LLM agents (YSocial) and agent-based models for controlled experiments.</p>
       <button class="theme__go" type="button" data-filter="abm">papers <span class="count"></span> →</button>
     </article>
     <article class="theme" data-theme="rai">
-      <div class="theme__glyph" aria-hidden="true"></div>
-      <h3>Responsible AI &amp; transparency</h3>
-      <p>Fairness and transparency in AI systems: dialect bias in abusive-language detection and the role of explainability; obligations for detecting and labelling AI-generated content, developed with the GPAI Responsible AI working group.</p>
+      <div class="theme__head"><span class="theme__icon" aria-hidden="true"><i class="fa-solid fa-scale-balanced"></i></span><h3>Responsible AI &amp; transparency</h3></div>
+      <p>Bias, explainability and transparency of AI systems, including the detection and labelling of AI-generated content.</p>
       <button class="theme__go" type="button" data-filter="rai">papers <span class="count"></span> →</button>
     </article>
     <article class="theme theme--core" data-theme="core">
-      <div class="theme__glyph" aria-hidden="true"></div>
-      <h3>The common thread: online social platforms</h3>
-      <p>All five lines meet on the same ground: the platforms where people talk, argue and look for help. Reddit and Twitter/X for the data, and simulated platforms where LLM agents interact for the experiments.</p>
+      <div class="theme__head"><span class="theme__icon" aria-hidden="true"><i class="fa-solid fa-circle-nodes"></i></span><h3>The common thread: online social platforms</h3></div>
+      <p>All five lines study the same ground: Reddit, Twitter/X and simulated social platforms.</p>
       <button class="theme__go" type="button" data-filter="all">all papers <span class="count"></span> →</button>
     </article>
   </div>
@@ -184,16 +180,17 @@
   <h2 class="sh"><span class="sh__n">03</span>Publications</h2>
 
   <div class="filters" role="group" aria-label="Filter publications">
-    <div class="chips" id="theme-chips"></div>
-    <div class="chips chips--type" id="type-chips"></div>
+    <label class="select"><span>Topic</span><select id="f-theme"></select></label>
+    <label class="select"><span>Type</span><select id="f-type"></select></label>
+    <p class="pubs__status" id="pubs-status" aria-live="polite"></p>
   </div>
-  <p class="pubs__status mono" id="pubs-status" aria-live="polite"></p>
   <ol class="pubs" id="pubs"></ol>
+  <button class="more-btn" id="pubs-more" type="button" hidden></button>
   <noscript><p>Please enable JavaScript to see the publication list, or browse my <a href="https://orcid.org/0000-0002-7692-8134">ORCID profile</a>.</p></noscript>
 </section>
 
 <!-- ============================ 04 PROJECTS ============================ -->
-<section class="section wrap" id="projects">
+<section class="section section--band wrap" id="projects">
   <h2 class="sh"><span class="sh__n">04</span>Projects &amp; software</h2>
 
   <h3 class="label">Software &amp; datasets</h3>
@@ -201,25 +198,25 @@
     <a class="card card--hero" href="https://y-not.social/">
       <span class="card__tag">software · LLM agents</span>
       <h4>YSocial</h4>
-      <p>A social media digital twin where LLM-powered agents post, interact, build relationships and receive algorithmically curated feeds. Agent traits, network structure and recommenders are all tunable, so you can run controlled experiments.</p>
+      <p>A social media digital twin where LLM-powered agents post, interact and receive algorithmically curated feeds, for controlled experiments.</p>
       <span class="card__link">y-not.social ↗</span>
     </a>
     <div class="card">
       <span class="card__tag">code + data</span>
       <h4>Echo chambers on Reddit</h4>
-      <p>Python code and Reddit discussion networks for the echo-chamber detection framework.</p>
+      <p>Code and Reddit networks for the echo-chamber detection framework.</p>
       <span class="card__link"><a href="https://github.com/virgiiim/EC_Reddit_CaseStudy">github ↗</a> · <a href="https://zenodo.org/records/10606191">zenodo ↗</a></span>
     </div>
     <a class="card" href="https://zenodo.org/records/10397400">
       <span class="card__tag">dataset · contact person</span>
       <h4>European Multilingual News Articles</h4>
-      <p>18M+ news articles from 205 outlets in 27 countries and 23 languages (2017–2021), from Common Crawl News, annotated with topic and article type. Restricted access.</p>
+      <p>18M+ articles from 205 outlets, 27 countries, 23 languages (2017–2021). Restricted access.</p>
       <span class="card__link">zenodo ↗</span>
     </a>
     <a class="card" href="https://zenodo.org/records/13909011">
       <span class="card__tag">dataset</span>
       <h4>Italian Covid-19 Retweet Network</h4>
-      <p>Anonymised Twitter/X retweet networks of the Italian Covid-19 debate, 2020–2022, split into five pandemic phases.</p>
+      <p>Anonymised retweet networks of the Italian Covid-19 debate, 2020–2022.</p>
       <span class="card__link">zenodo ↗</span>
     </a>
     <a class="card" href="https://zenodo.org/records/10371290">
@@ -231,7 +228,7 @@
   </div>
 
   <h3 class="label">Research projects</h3>
-  <ul class="rows">
+  <ul class="rows" data-limit="3" data-min="0">
     <li><span class="t">2024 – now</span><div><b>Co-evolution dynamics of social media and urban human-AI ecosystems</b><small>Postdoc project, University of Pisa</small></div></li>
     <li><span class="t">2023 – 26</span><div><a href="https://fondazione-fair.it/"><b>FAIR</b></a>, Future Artificial Intelligence Research, Spoke “Human-centered AI”<small>NextGenerationEU · PNRR</small></div></li>
     <li><span class="t">2022 – now</span><div><a href="https://gpai.ai/"><b>GPAI</b></a>, Responsible AI for Social Media Governance<small>Invited Specialist, Project Advisory Group on Governance &amp; Transparency of Social Media, in partnership with the OECD</small></div></li>
@@ -248,7 +245,7 @@
   <div class="cols">
     <div>
       <h3 class="label">Organising</h3>
-      <ul class="rows rows--tight">
+      <ul class="rows rows--tight" data-limit="3">
         <li><span class="t">2026</span><div><b>Simulated Societies</b> 2nd ed., From Opinion Dynamic Models to Digital Twins<small>Workshop organiser · ASONAM 2026, Rabat</small></div></li>
         <li><span class="t">2026</span><div><a href="https://dmworkshop.github.io/"><b>Digital Minds</b></a>, Assessing the Interplay of Social Media on Mental Health<small>Organiser &amp; co-chair · ICWSM 2026, Los Angeles</small></div></li>
         <li><span class="t">2025</span><div><a href="https://hhai-conference.org/2025/"><b>HHAI 2025</b></a>, 4th Int. Conference on Hybrid Human-Artificial Intelligence<small>Local organiser · Pisa</small></div></li>
@@ -263,17 +260,12 @@
         <li><span class="t">2025</span><div><b>Assessing the Impact of AI-Driven Recommenders on Human-AI Ecosystems</b><small>HHAI 2025, Pisa</small></div></li>
       </ul>
 
-      <h3 class="label">Editorial &amp; programme committees</h3>
-      <ul class="rows rows--tight">
-        <li><span class="t">2026</span><div><b>Topic Editor</b>, Frontiers in Artificial Intelligence<small>Special issue “Digital Minds: Assessing the Interplay of Social Media on Mental Health”</small></div></li>
-        <li><span class="t">PC</span><div>HHAI 2026 · HHAI 2025 · IAIL 2025 · AIDEM 2025 · SMS 2025 · HyperSCI 2024</div></li>
-      </ul>
 
     </div>
 
     <div>
       <h3 class="label">Talks &amp; invited seminars</h3>
-      <ul class="rows rows--tight talks">
+      <ul class="rows rows--tight talks" data-limit="4">
         <li><span class="t">May 2026</span><div><b>Participant Behavior and Community Response in Online Mental Health Communities</b><small>CS2Italy, Turin</small></div></li>
         <li><span class="t">Apr 2026</span><div><b>A Step-by-Step Guide to Requesting Data through the EU Digital Services Act Data Access Portal</b><small>Invited lecture · National PhD in AI, University of Pisa</small></div></li>
         <li><span class="t">Sep 2025</span><div><b>Participant Behavior and Community Response in Online Mental Health Communities</b><small>Conference on Complex Systems (CCS), Siena</small></div></li>
@@ -284,6 +276,11 @@
         <li><span class="t">Jan 2024</span><div><b>Modeling Emotional Exposure in Online Self-Help Communities</b><small>NetSciX, Venice</small></div></li>
         <li><span class="t">Apr 2023</span><div><b>A Framework for the Diachronic and Linguistic Analysis of Online Polarized Discussions</b><small>CompleNet, Aveiro</small></div></li>
         <li><span class="t">Nov 2022</span><div><b>Will You Take the Knee? Italian Twitter Echo Chambers' Genesis During EURO 2020</b><small>Complex Networks, Palermo</small></div></li>
+      </ul>
+      <h3 class="label">Editorial &amp; programme committees</h3>
+      <ul class="rows rows--tight">
+        <li><span class="t">2026</span><div><b>Topic Editor</b>, Frontiers in Artificial Intelligence<small>Special issue “Digital Minds: Assessing the Interplay of Social Media on Mental Health”</small></div></li>
+        <li><span class="t">PC</span><div>HHAI 2026 · HHAI 2025 · IAIL 2025 · AIDEM 2025 · SMS 2025 · HyperSCI 2024</div></li>
       </ul>
     </div>
   </div>
@@ -319,7 +316,7 @@
 -->
 
 <!-- ============================ 06 CONTACT ============================ -->
-<section class="section wrap contact" id="contact">
+<section class="section section--band wrap contact" id="contact">
   <h2 class="sh"><span class="sh__n">06</span>Contact</h2>
   <div class="contact__grid">
     <p class="contact__big">Let's connect:<br><a href="mailto:virginia.morini@di.unipi.it">virginia.morini@di.unipi.it</a></p>
@@ -340,7 +337,7 @@
 
 </main>
 
-<footer class="foot wrap">
+<footer class="foot foot--band wrap">
   <span>© 2026 Virginia Morini</span>
   <span class="mono">last updated · october 2026</span>
   <a href="#top" class="mono">↑ top</a>
