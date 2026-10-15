@@ -701,3 +701,10 @@ main > section { position: relative; }
 .foot--band { position: relative; z-index: 0; }
 .foot--band::after { content: ""; position: absolute; top: 0; bottom: 0; left: calc(50% - 50vw); right: calc(50% - 50vw); background: var(--sand); z-index: -1; }
 .foot::before { z-index: 0; }
+
+/* a card with two links: the whole card opens GitHub, the Zenodo link stays clickable on its own */
+.card--multi { transition: transform .2s, border-color .2s; }
+.card--multi:hover { transform: translateY(-3px); border-color: var(--peri); }
+.card--multi .card__main::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+.card--multi .card__link a:not(.card__main) { position: relative; z-index: 1; }
+.hero { scroll-margin-top: 0; }
